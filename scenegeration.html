@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Tilt and Rotate with Titles</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        canvas {
+            display: block;
+            margin-top: 20px;
+        }
+        #controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+            width: 100%;
+        }
+        label, p {
+            font-size: 16px;
+            color: #333;
+        }
+        button {
+            padding: 12px;
+            background-color: #87CEEB;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            margin: 10px 0;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #69b0d9;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        #scene-container {
+            margin-left: 250px;
+            width: 80%;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .image-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            width: 80%;
+        }
+        .image-box {
+            text-align: center;
+            max-width: 180px;
+        }
+        .image-box img {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Interactive Image Tilt and Rotate</h2>
+    <div id="controls">
+        <input type="file" id="imageUpload" accept="image/*">
+        <p><strong>Rotate Image</strong></p>
+        <input type="range" id="rotateRange" min="0" max="360" step="1" value="0">
+        <div class="slider-label">
+            <span>0°</span>
+            <span>360°</span>
+        </div>
+
+        <p><strong>Tilt Image</strong></p>
+        <input type="range" id="tiltRange" min="-90" max="90" step="1" value="0">
+        <div class="slider-label">
+            <span>-90°</span>
+            <span>90°</span>
+        </div>
+        
+        <button onclick="resetImage()">Reset Image</button>
+    </div>
+
+    <div id="scene-container"></div>
+
+    <div class="image-container" id="side-images">
+        <!-- Static images will be displayed here below the main image -->
+    </div>
+
+    <script>
+        let scene, camera, renderer, controls;
+        let imageTexture, imageMesh;
+        let rotateValue = 0;
+        let tiltValue = 0;
+
+        // Initialize Three.js Scene
+        function initScene() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById("scene-container").appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            camera.position.set(0, 1, 5);
+            camera.lookAt(0, 0, 0);
+
+            animate();
+        }
+
+        // Load the image texture and apply it to a plane geometry
+        function loadImageTexture(file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                if (imageTexture) scene.remove(imageMesh); // Remove previous image mesh
+
+                const textureLoader = new THREE.TextureLoader();
+                imageTexture = textureLoader.load(event.target.result);
+
+                const geometry = new THREE.PlaneGeometry(4, 4);
+                const material = new THREE.MeshBasicMaterial({ map: imageTexture, side: THREE.DoubleSide });
+                imageMesh = new THREE.Mesh(geometry, material);
+
+                scene.add(imageMesh);
+                createSideImages(event.target.result); // Create static side images below the main image
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Rotate and tilt image based on user input
+        function updateImageTransform() {
+            if (imageMesh) {
+                imageMesh.rotation.z = THREE.MathUtils.degToRad(rotateValue);
+                imageMesh.rotation.x = THREE.MathUtils.degToRad(tiltValue);
+            }
+        }
+
+        // Reset image to original state
+        function resetImage() {
+            rotateValue = 0;
+            tiltValue = 0;
+            document.getElementById("rotateRange").value = 0;
+            document.getElementById("tiltRange").value = 0;
+            updateImageTransform();
+        }
+
+        // Event listeners for slider controls
+        document.getElementById("rotateRange").addEventListener("input", function (event) {
+            rotateValue = event.target.value;
+            updateImageTransform();
+        });
+
+        document.getElementById("tiltRange").addEventListener("input", function (event) {
+            tiltValue = event.target.value;
+            updateImageTransform();
+        });
+
+        // Event listener for image upload
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+            if (event.target.files && event.target.files[0]) {
+                loadImageTexture(event.target.files[0]);
+            }
+        });
+
+        // Function to create static side images with titles
+        function createSideImages(imageSrc) {
+            const sideImagesContainer = document.getElementById("side-images");
+            sideImagesContainer.innerHTML = ''; // Clear previous images
+
+            const sideImageData = [0, 90, 180, -90];
+            sideImageData.forEach(angle => {
+                const sideImageDiv = document.createElement('div');
+                sideImageDiv.classList.add('image-box');
+
+                const sideImage = document.createElement('img');
+                sideImage.src = imageSrc;
+                sideImage.style.transform = `rotate(${angle}deg)`;  // Rotate only the side images
+
+                const title = document.createElement('div');
+                title.classList.add('title');
+                title.innerText = `Tilt: ${angle}°`;
+
+                sideImageDiv.appendChild(sideImage);
+                sideImageDiv.appendChild(title);
+                sideImagesContainer.appendChild(sideImageDiv);
+            });
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Initialize everything
+        initScene();
+    </script>
+
+</body>
+</html>
