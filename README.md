@@ -1,104 +1,65 @@
 # scene-generation
 This web application allows users to upload an image, apply tilt and rotation transformations, and generate multiple variations of the image. The main image remains interactive, supporting zooming using the mouse scroll or pinch gestures. The application also provides an option to export the transformed images.
+# Image Tilt & Rotate Web Application
 
-Image Tilt & Rotate Web Application
+## Overview
+This project is a web-based application that allows users to upload an image, apply tilt and rotation transformations, and generate variations with labeled angles. The main image is interactive, supporting zooming and panning, while four additional transformed images are displayed as output with export options.
 
-Overview
+## Features
+- Upload an image and apply tilt/rotate transformations
+- Interactive main image with mouse zoom and pan
+- Four transformed images with labeled rotation/tilt angles
+- Individual export buttons for each output image
+- User-friendly UI with clean design and responsive layout
 
-This web application allows users to upload an image and apply transformations such as rotation and tilt. The main image remains interactive, allowing zooming with the mouse. Additionally, four transformed versions of the image (rotated, tilted, combined, and flipped) are displayed alongside the main image with export functionality.
+## Technologies Used
+- **HTML**: Structure of the webpage
+- **CSS**: Styling and layout
+- **JavaScript**: Handling transformations, interactivity, and image processing
+- **Three.js**: Rendering interactive 3D transformations
 
-Features
+## File Structure
+```
+project-folder/
+│── index.html    # Main application file
+│── styles.css    # Custom styles
+│── script.js     # JavaScript for interactivity
+│── README.md     # Project documentation
+```
 
-Image Upload: Users can upload an image file.
+## Usage Instructions
+1. Open `index.html` in a browser.
+2. Click on `Choose File` to upload an image.
+3. Use the `Rotate` and `Tilt` sliders to adjust the image.
+4. View the transformed images below the main image.
+5. Click `Export Image` under any image to download it.
 
-Rotation & Tilt: Sliders allow users to rotate and tilt the image.
+## HTML Structure
+The webpage consists of:
+- **File Input**: `<input type="file">` for image upload
+- **Sliders**: `<input type="range">` for rotation and tilt adjustments
+- **Canvas**: `<canvas>` for rendering the main image
+- **Div Containers**: `<div>` for output images
+- **Buttons**: `<button>` for exporting images
 
-Interactive Main Image: Supports zoom in/out via the mouse wheel.
+## JavaScript Functionality
+- **Image Upload**: Reads the uploaded file and renders it on the canvas.
+- **Interactive Main Image**: Supports zooming and panning.
+- **Transformation Logic**: Applies tilt and rotation using CSS `transform`.
+- **Export Function**: Captures the transformed image and downloads it.
 
-Side Output Images: Displays four variations of the transformed image.
+## CSS Styling
+- Uses **flexbox** for layout organization.
+- Buttons have **hover effects** for better UI experience.
+- Outputs are **responsive** to different screen sizes.
 
-Export Option: Each output image has an export button.
+## Future Enhancements
+- Add more transformation effects.
+- Implement real-time preview before applying changes.
+- Enhance export functionality with adjustable resolution options.
 
-Responsive UI: Clean, structured layout with a user-friendly interface.
+## Author
+Developed by [Your Name / Company]
 
-Technologies Used
-
-HTML: For structuring the webpage.
-
-CSS: For styling and responsive design.
-
-JavaScript: For implementing interactivity and transformations.
-
-Canvas API: Used for rendering images and transformations.
-
-Code Structure
-
-HTML Tags Used:
-
-<input type="file"> - For uploading images.
-
-<input type="range"> - For rotation and tilt controls.
-
-<canvas> - For rendering the interactive main image.
-
-<div> - For layout structuring.
-
-<button> - For user interaction (reset and export actions).
-
-CSS Styling:
-
-body: Center-aligned, light background.
-
-#controls: Sidebar with sliders and buttons.
-
-.image-container: Holds the main image and output images.
-
-canvas: Displays the main interactive image.
-
-.image-box: Contains output images with titles and buttons.
-
-JavaScript Functionality:
-
-Image Upload Handling
-
-Uses FileReader to load images.
-
-Draws the image on <canvas>.
-
-Rotation & Tilt Transformation
-
-Uses transform CSS property (rotate, skewY).
-
-Updates preview images dynamically.
-
-Interactive Zoom for Main Image
-
-wheel event listener adjusts the scale.
-
-Generate Output Images
-
-Creates four variations with different transformations.
-
-Export Images
-
-Converts <canvas> output to downloadable PNG files.
-
-How to Use
-
-Open the web page in a browser.
-
-Upload an image using the file input.
-
-Adjust rotation and tilt using sliders.
-
-View the main image and output variations.
-
-Click "Export Image" to download any output.
-
-Future Enhancements
-
-Add camera controls for dynamic image positioning.
-
-Implement additional transformation effects.
 
 Improve UI with animations.
