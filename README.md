@@ -59,7 +59,5 @@ The webpage consists of:
 - Enhance export functionality with adjustable resolution options.
 
 ## Author
-Developed by [Your Name / Company]
+Developed by JB Arrowstar 
 
-
-Improve UI with animations.
